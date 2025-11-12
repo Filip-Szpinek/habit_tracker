@@ -3,7 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 db_user = "postgres"
-db_password = "Szpinek2008!"
+db_password = ""
 db_host = "localhost"
 db_port = "5432"
 db_name = "habit_tracker"
