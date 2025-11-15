@@ -2,6 +2,8 @@
     import { page } from '$app/stores';
     import LoginDialog from './loginDialog.svelte'
 
+    let { side } = $props();
+
     let isOpen = $state(false);
     let show = $state(false);
 
@@ -13,10 +15,17 @@
 
 <div class="h-screen bg-black border-solid text-white {isOpen ? 'w-48' : 'w-16'} flex flex-col p-4 rounded-xl gap-1 transition-all  duration-500 ease-in-out "
 >
-    <label class="flex justify-left mb-4 cursor-pointer">
+    <label class="flex mb-4 cursor-pointer"
+    class:justify-end={side === 'right'}
+    class:justify-left={side  === 'left'}
+    >
         <input type="checkbox" class="hidden" onclick={() => isOpen = !isOpen}/>
         <h3 class="transition-all border-2 border-gray-300 rounded-lg size-8 text-center hover:bg-gray-700">
-            {isOpen ? '<' : '>' }
+            {#if side === 'left'}
+                {isOpen ? '<' : '>' }
+            {:else}
+                {isOpen ? '>' : '<' }
+            {/if}
         </h3>
     </label>
 
@@ -24,8 +33,8 @@
         {#each links as { name, href }}
             <a
                     class="flex w-11/12 items-center gap-2 p-2 rounded hover:bg-gray-700 text-center transition-all duration-300"
-                    class:bg-green-800={$page.url.pathname === href}
-                    class:hover:bg-green-650={$page.url.pathname === href}
+                    class:bg-red-800={$page.url.pathname === href}
+                    class:hover:bg-red-650={$page.url.pathname === href}
                     class:font-bold={$page.url.pathname === href}
                     href={href}
             >
