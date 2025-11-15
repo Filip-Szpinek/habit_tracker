@@ -52,9 +52,9 @@
                         </span>
                     </div>
                     <div class="w-full flex flex-col gap-2">
-                        <label class="font-semibold text-xs text-gray-100">Username or email</label>
+                        <label class="font-semibold text-xs text-gray-100">Username</label>
                         <input
-                                placeholder="Username/Email"
+                                placeholder="Username"
                                 class="border rounded-lg px-3 py-2 mb-5 text-sm w-full outline-none dark:border-gray-500 dark:bg-gray-900"
                         />
                     </div>
@@ -88,22 +88,25 @@
                         </span>
                     </div>
                     <div class="w-full flex flex-col gap-2">
-                        <label class="font-semibold text-xs text-gray-100">Email</label>
-                        <input
-                                placeholder="email@example.com"
-                                type="email"
-                                class="border rounded-lg px-3 py-2 mb-3 text-sm w-full outline-none dark:border-gray-500 dark:bg-gray-900"
-                        />
-                    </div>
-                    <div class="w-full flex flex-col gap-2">
                         <label class="font-semibold text-xs text-gray-100">Username</label>
                         <input
                                 placeholder="Username"
                                 class="border rounded-lg px-3 py-2 mb-3 text-sm w-full outline-none dark:border-gray-500 dark:bg-gray-900"
                         />
                     </div>
+                    <span class="m-0 text-xs max-w-[90%] text-center text-[#8B8E98]">
+                            The passowrd must be at least 8 characters long, have one uppercase letter, one lowercase letter, and one number.
+                        </span>
                     <div class="w-full flex flex-col gap-2">
                         <label class="font-semibold text-xs text-gray-100">Password</label>
+                        <input
+                                placeholder="••••••••"
+                                class="border rounded-lg px-3 py-2 mb-5 text-sm w-full outline-none dark:border-gray-500 dark:bg-gray-900"
+                                type="password"
+                        />
+                    </div>
+                    <div class="w-full flex flex-col gap-2">
+                        <label class="font-semibold text-xs text-gray-100">Verify password</label>
                         <input
                                 placeholder="••••••••"
                                 class="border rounded-lg px-3 py-2 mb-5 text-sm w-full outline-none dark:border-gray-500 dark:bg-gray-900"
