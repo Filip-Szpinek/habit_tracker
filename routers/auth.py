@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Request, Form, Depends, HTTPException, status, Response
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from pydantic import ValidationError
 from database import SessionLocal
 from models import User
@@ -11,7 +11,7 @@ from utils import verify_password, hash_password, create_access_token, verify_ac
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
 
-#funkcja do pobierania DB
+#funkcja do pobierania sesjji DB
 def get_db():
     db = SessionLocal()
     try:
@@ -24,7 +24,28 @@ def get_db():
 def login_form(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
-#login
+#pobranie akualnego uzytkownika
+def get_current_user(request: Request, db: Session = Depends(get_db)):
+    token = request.cookies.get("access_token")
+
+    if not token:
+        return None
+    
+    payload = verify_access_token(token)
+    if not payload:
+        return None
+    
+    user_id = payload.get("id")
+    if not user_id:
+        return None
+
+    user = db.query(User).options(joinedload(User.habits)).filter(User.user_id == user_id).first()
+    if not user:
+        return None
+
+    return user
+
+# ###login
 @router.post("/login", response_class=HTMLResponse)
 def login(
     request: Request,
@@ -62,7 +83,8 @@ def login(
     response.set_cookie(key="access_token", value=token, httponly=True)
     return response
 
-#register
+
+# ###register
 @router.post("/register", response_class=HTMLResponse)
 def register(
     request: Request,
@@ -113,29 +135,10 @@ def register(
         {"request": request, "message": "Utworzono użytkownika! Możesz się teraz zalogować."}
     )
 
-#chroniona ścieżka do habit-trackera
-@router.get("/habit-tracker", response_class=HTMLResponse)
-def habit_tracker(request: Request, db: Session = Depends(get_db)):
-    token = request.cookies.get("access_token")
-    if not token:
-        return RedirectResponse(url="/", status_code=303)
-
-    payload = verify_access_token(token)
-    if not payload:
-        return RedirectResponse(url="/", status_code=303)
-
-    user = db.query(User).filter(User.user_id == payload.get("id")).first()
-    if not user:
-        return RedirectResponse(url="/", status_code=303)
-
-    return templates.TemplateResponse(
-        "habit_tracker.html",
-        {"request": request, "user_id": user.user_id, "login": user.login}
-    )
-
 #wylogowanie
 @router.get("/logout")
 def logout():
     response = RedirectResponse(url="/", status_code=303)
     response.delete_cookie(key="access_token")
     return response
+
