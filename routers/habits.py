@@ -12,12 +12,21 @@ templates = Jinja2Templates(directory="templates")
 
 #zaladowanie strony i habtow dla danego uzytkownika
 @router.get("/habit-tracker")
-def habit_tracker(request: Request, user: User = Depends(get_current_user)):
+def habit_tracker(request: Request, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     if not user:
         return RedirectResponse(url="/", status_code=303)
 
-    habits = user.habits
-    print("User habits:", [(h.habit_id, h.name) for h in habits]) 
+    # Pobranie wszystkich habitów użytkownika
+    habits = db.query(Habit).filter(Habit.user_id == user.user_id).all()
+
+    # Pobranie logów do heatmapy
+    habit_log_data = []
+    for habit in habits:
+        logs = db.query(HabitLog).filter(
+            HabitLog.habit_id == habit.id,
+            HabitLog.user_id == user.user_id
+        ).order_by(HabitLog.date.desc()).limit(3).all()
+        habit_log_data.append({"habit": habit, "logs": logs})
 
     return templates.TemplateResponse(
         "habit_tracker.html",
@@ -25,10 +34,10 @@ def habit_tracker(request: Request, user: User = Depends(get_current_user)):
             "request": request,
             "login": user.login,
             "user_id": user.user_id,
-            "habits": habits
+            "habits": habits,
+            "habit_log_data": habit_log_data 
         }
     )
-
 #checkowanie habitow
 @router.post("/check-habit/{habit_id}")
 def check_habit(habit_id: int, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
