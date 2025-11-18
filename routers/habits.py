@@ -25,7 +25,7 @@ def habit_tracker(request: Request, user: User = Depends(get_current_user), db: 
         logs = db.query(HabitLog).filter(
             HabitLog.habit_id == habit.id,
             HabitLog.user_id == user.user_id
-        ).order_by(HabitLog.date.desc()).limit(3).all()
+        ).order_by(HabitLog.date.desc()).limit(7).all()
         habit_log_data.append({"habit": habit, "logs": logs})
 
     return templates.TemplateResponse(

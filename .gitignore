@@ -1,10 +1,4 @@
-<<<<<<< HEAD
 .env
 __pycache__/
 *.pyc
-=======
-.env_
-_pycache__/
-*.pyc
 routers/__pycache__/
->>>>>>> habit-tracker-main
