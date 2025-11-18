@@ -35,6 +35,22 @@
     {% endif %}
 
     <h1>Habit -> heatmapa + dodawanie/usuwanie habitow</h1>
+        {% if habit_log_data %}
+        {% for item in habit_log_data %}
+            <div class="habit-container">
+                <strong>{{ item.habit.name }} ({{ item.habit.frequency }})</strong>
+                <div class="logs">
+                    {% for log in item.logs %}
+                    <div class="log {{ 'done' if log.is_done else 'not-done' }}">
+                        {{ '✔' if log.is_done else 'X' }}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>Nie znaleziono żadnych logów do wyświetlenia.</p>
+    {% endif %}
     <h2>Dodaj nowy habit:</h2>
     <form method="post" action="/add-habit">
         <input type="text" name="name" placeholder="Nazwa habitu" required>
