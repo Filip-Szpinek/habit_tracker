@@ -18,7 +18,7 @@ RUN --mount=type=bind,source=package.json,target=package.json \
 RUN npm install -g nodemon
 
 # Copy all files
-COPY . .
+COPY ../svelteUI .
 
 # Non-root user
 RUN chown -R node /usr/src/app

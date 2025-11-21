@@ -47,7 +47,7 @@ def get_current_user(request: Request, db: Session = Depends(get_db)):
 
     return user
 
-
+# logowanie
 @router.post("/login")
 async def login(
         request: Request,

@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { page } from '$app/stores';
+    import { location } from 'svelte-spa-router';
     import LoginDialog from './loginDialog.svelte';
     import { userStore } from './stores/userStore';
 
@@ -9,10 +9,16 @@
     let show = $state(false);
 
     const links = [
+        { name: 'Home', href: '#/' },
+        // { name: 'Statistics', href: '#/statistics' },
+        { name: 'Settings', href: '#/settings' }
+    ];
+
+    const url = [
         { name: 'Home', href: '/' },
         // { name: 'Statistics', href: '/statistics' },
         { name: 'Settings', href: '/settings' }
-    ];
+    ]
 
     async function handleLogout() {
         try {
@@ -24,6 +30,7 @@
             console.error('Logout failed:', err);
         }
     }
+
 </script>
 
 <div class="h-screen bg-black border-solid text-white {isOpen ? 'w-48' : 'w-16'} flex flex-col p-4 rounded-xl gap-1 transition-all  duration-500 ease-in-out "
@@ -46,9 +53,9 @@
         {#each links as { name, href }}
             <a
                     class="flex w-11/12 items-center gap-2 p-2 rounded hover:bg-gray-700 text-center transition-all duration-300"
-                    class:bg-red-800={$page.url.pathname === href}
-                    class:hover:bg-red-650={$page.url.pathname === href}
-                    class:font-bold={$page.url.pathname === href}
+                    class:bg-red-800={$location === href}
+                    class:hover:bg-red-650={$location === href}
+                    class:font-bold={$location === href}
                     href={href}
             >
                 <span>{name}</span>
@@ -56,7 +63,6 @@
         {/each}
         <div class="mt-auto w-full flex flex-col gap-2 justify-center">
             {#if $userStore}
-                <!-- Logged in - show username and logout -->
                 <div class="p-2 w-11/12 mx-auto rounded-xl bg-gray-800 border-2 border-gray-600 text-center">
                     <p class="text-sm text-gray-300 truncate">{$userStore.username}</p>
                 </div>
@@ -68,7 +74,6 @@
                     Logout
                 </button>
             {:else}
-                <!-- Not logged in - show login button -->
                 <button
                         class="p-2 w-11/12 mx-auto rounded-xl bg-gray-950/90 hover:bg-gray-100/10 transition-all duration-300
                            border-2 border-gray-300/75 hover:border-gray-300 cursor-pointer"
