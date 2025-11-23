@@ -10,12 +10,12 @@ from .auth import get_current_user, get_db, wants_json
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
 
-# Helper function - same as in auth.py
+# Helper function
 def is_api_request(request: Request) -> bool:
     accept = request.headers.get("accept", "")
     return "application/json" in accept or request.headers.get("sec-fetch-mode") == "cors"
 
-# API endpoint to get habits
+# endpoint do pobierania habitow w formacie JSON
 @router.get("/api/habits")
 def get_habits_api(request: Request, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     if not user:
@@ -41,8 +41,6 @@ def get_habits_api(request: Request, user: User = Depends(get_current_user), db:
             if date_str not in logs_by_date:
                 logs_by_date[date_str] = []
             logs_by_date[date_str].append({
-                "time": "00:00",
-                "count": 1,
                 "completed": log.is_done
             })
 
@@ -57,11 +55,9 @@ def get_habits_api(request: Request, user: User = Depends(get_current_user), db:
 
         habits_data.append({
             "id": habit.id,
-            "title": habit.name,
+            "name": habit.name,
             "description": habit.description,
             "frequency": habit.frequency,
-            "amount": 1,
-            "startDate": date.today().isoformat(),
             "logs": formatted_logs
         })
 

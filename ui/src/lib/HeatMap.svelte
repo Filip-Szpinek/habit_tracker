@@ -1,34 +1,31 @@
 <script lang="ts">
-    import type { logDate } from './types/types.ts';
-    import type { habit } from "./types/types.ts";
+    import type { Habit, LogDate } from './types/types.ts';
 
-    let {Habit} : { Habit: habit} = $props();
+    let {habit} : { habit: Habit} = $props();
 
-    const amount: number = Habit.amount;
-    const logs: logDate[] = Habit.logs;
+    const logs: LogDate[] = habit.logs;
     const firstday = new Date(logs[logs.length - 1].date).getDay();
 
 
     function calculating(): { date: string; perday: number }[] {
         if (!logs || logs.length === 0) return [];
 
-        // Sort logs newest → oldest (your data is already this way)
+        //sortowanie od najstarszej do najnowszej daty
         const sorted = [...logs].sort(
             (a, b) => new Date(a.date).valueOf() - new Date(b.date).valueOf()
         );
 
-        const firstDate = new Date(sorted[0].date);                  // earliest (e.g. 2025-11-15)
-        const lastDate = new Date(sorted[sorted.length - 1].date);    // latest  (e.g. 2025-11-23)
+        const firstDate = new Date(sorted[0].date);                  //najwcześniejsza data, czyli pierwsza dodana
+        const lastDate = new Date(sorted[sorted.length - 1].date);    // najpóźniejsza np. dzisiaj
 
         const result: { date: string; perday: number }[] = [];
 
-        // Walk from first day → last day
+
         const cursor = new Date(firstDate);
 
         while (cursor <= lastDate) {
             const iso = cursor.toISOString().slice(0, 10);
 
-            // find matching entry for this exact day
             const logEntry = sorted.find(l =>
                 new Date(l.date).toISOString().slice(0, 10) === iso
             );
@@ -44,7 +41,6 @@
                 perday
             });
 
-            // next day
             cursor.setDate(cursor.getDate() + 1);
         }
 
@@ -60,8 +56,8 @@
     {/each}
     {#each bydate as log}
             <div class="size-6 rounded-sm bg-green-600"
-                 style="opacity: {Math.max(0, Math.min(1, (log.perday || 0) / (amount || 1)))}"
-                 title="{log.date} :  {amount} : {log.perday} "
+                 style="opacity: {Math.max(0, Math.min(1, (log.perday || 0) /  1))}"
+                 title="{log.date} : {log.perday} "
             >
             </div>
     {/each}

@@ -1,24 +1,5 @@
 import { writable } from 'svelte/store';
-
-export interface Habit {
-    id: number,
-    name: string,
-    description: string,
-    frequency: string,
-    amount: number,
-    logs: LogDate[]
-}
-
-export interface LogDate {
-    date: string,
-    logs: Log[]
-}
-
-export interface Log {
-    time?: string,
-    completed: boolean,
-    count: number
-}
+import type {Habit, LogDate, Log} from '../types/types'
 
 interface HabitsState {
     habits: Habit[];

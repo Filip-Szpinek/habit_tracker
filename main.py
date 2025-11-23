@@ -37,20 +37,17 @@ app.add_middleware(
 # Mount static files from ui/static
 ui_static_path = Path("ui/static")
 if ui_static_path.exists():
-    # Mount assets folder
     app.mount("/app/assets", StaticFiles(directory="ui/static/assets"), name="ui-assets")
 
-
     # Also mount vite.svg and other root files
-    @app.get("/app/vite.svg")
-    async def serve_vite_svg():
-        svg_path = ui_static_path / "vite.svg"
-        if svg_path.exists():
-            return FileResponse(svg_path)
-        return FileResponse("ui/static/assets/vite.svg")  # fallback
+@app.get("/app/vite.svg")
+async def serve_vite_svg():
+    svg_path = ui_static_path / "vite.svg"
+    if svg_path.exists():
+        return FileResponse(svg_path)
+    return FileResponse("ui/static/assets/vite.svg")  # fallback
 
-
-# Exception handler for 422
+#obsluga bledu 422
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
     return templates.TemplateResponse(
@@ -62,8 +59,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY
     )
 
-
-# Serve the Svelte app - catch all /app routes
+# routing dla svelte app np. app/#/home, app/#/settings
 @app.get("/app/{full_path:path}", response_class=HTMLResponse)
 async def serve_app(full_path: str):
     """Serve the built Svelte app for any /app route"""
@@ -75,7 +71,7 @@ async def serve_app(full_path: str):
         status_code=404
     )
 
-
+#strona główna frontendu
 @app.get("/app", response_class=HTMLResponse)
 async def serve_app_root():
     """Serve the built Svelte app root"""

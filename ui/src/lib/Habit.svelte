@@ -1,26 +1,26 @@
 <script lang="ts">
-    import type { habit } from './types/types.ts';
+    import type { Habit } from './types/types.ts';
     import { habitsStore } from './stores/habitsStore';
-    const {Habit}: {Habit: habit} = $props();
+    const {habit}: {habit: Habit} = $props();
 
-    const { title, description, frequency, logs} = Habit;
+    const { name, description, frequency, logs} = habit;
 
     let deleting = $state(false);
     let toggling = $state(false);
 
     async function handleDelete() {
-        if (!confirm(`Are you sure you want to delete "${Habit.title}"?`)) {
+        if (!confirm(`Are you sure you want to delete "${habit.name}"?`)) {
             return;
         }
 
         deleting = true;
-        await habitsStore.deleteHabit(Habit.id);
+        await habitsStore.deleteHabit(habit.id);
         deleting = false;
     }
 
     async function handleToggle() {
         toggling = true;
-        await habitsStore.toggleHabit(Habit.id);
+        await habitsStore.toggleHabit(habit.id);
         toggling = false;
     }
 
@@ -31,10 +31,10 @@
             && d.getDate() === b.getDate();
     }
 
-    export function getTodaysLogStatus(Habit: habit): { found: boolean; completed: boolean | null } {
+    export function getTodaysLogStatus(habit: Habit): { found: boolean; completed: boolean | null } {
         const today = new Date();
 
-        for (const datelog of Habit.logs ?? []) {
+        for (const datelog of habit.logs ?? []) {
             if (datelog.date && isSameDay(datelog.date, today)) {
                 const entries = Array.isArray(datelog.logs) ? datelog.logs : [];
 
@@ -47,9 +47,7 @@
         return { found: false, completed: null };
     }
 
-
-    // example reactive usage in Svelte:
-    const todaysLog = getTodaysLogStatus(Habit);
+    const todaysLog = getTodaysLogStatus(habit);
 
 </script>
 
@@ -79,7 +77,7 @@
                     {/if}
                 </button>
             </div>
-            <h2 class="text-2xl font-bold mb-2">{title}</h2>
+            <h2 class="text-2xl font-bold mb-2">{name}</h2>
             {#if description}
                 <p class="mb-2">{description}</p>
             {/if}

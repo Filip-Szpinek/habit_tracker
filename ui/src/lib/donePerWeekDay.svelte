@@ -1,8 +1,8 @@
 <script lang="ts">
-    import type {habit} from "./types/types";
+    import type {Habit} from "./types/types";
 
-    let {Habit} : { Habit: habit} = $props();
-    const dateLogs = Habit.logs;
+    let {habit} : { habit: Habit} = $props();
+    const dateLogs = habit.logs;
     const weekdays = [
         {
             day: 'Monday',

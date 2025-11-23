@@ -20,13 +20,6 @@ def get_db():
     finally:
         db.close()
 
-
-# strona główna
-# @router.get("/app/", response_class=HTMLResponse)
-# def login_form(request: Request):
-#     return templates.TemplateResponse("index.html", {"request": request})
-
-
 # pobranie akualnego uzytkownika
 def get_current_user(request: Request, db: Session = Depends(get_db)):
     token = request.cookies.get("access_token")
@@ -49,14 +42,12 @@ def get_current_user(request: Request, db: Session = Depends(get_db)):
     return user
 
 
-# Helper function - check if Accept header wants JSON
+# funkcja do sprawdzania czy powrotny typ wartości to ma być JSON
 def wants_json(request: Request) -> bool:
     accept = request.headers.get("accept", "")
-    # Check if client accepts JSON or if it's a fetch request
     return "application/json" in accept or request.headers.get("sec-fetch-mode") == "cors"
 
-
-# ###login - Always return JSON for API calls
+#login zmodyfikowany do obslugi JSON i formularzy
 @router.post("/login")
 def login(
         request: Request,
@@ -125,8 +116,7 @@ def login(
     )
     return redirect_response
 
-
-# ###register - Always return JSON for API calls
+#zarejetrowywamie zmodyfikowane do obslugi JSON i templatów html
 @router.post("/register")
 def register(
         request: Request,

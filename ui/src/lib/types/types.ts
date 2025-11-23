@@ -1,19 +1,16 @@
-export interface habit {
+export interface Habit {
     id: number,
-    title: string,
+    name: string,
     description: string,
-    frequency: 'daily' | 'weekly' | 'monthly',
-    amount: number,
-    logs: logDate[]
+    frequency: string,
+    logs: LogDate[]
 }
 
-export interface logDate {
+export interface LogDate {
     date: string,
-    logs: habitLog[]
+    logs: Log[]
 }
 
-export interface habitLog {
-    time?: string,
-    completed: boolean,
-    count: number
+export interface Log {
+    completed: boolean
 }

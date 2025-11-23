@@ -1,7 +1,6 @@
 <script lang="ts">
-    import Habit from '../lib/Habit.svelte';
+    import HabitComponent from '../lib/Habit.svelte';
     import AddHabitDialog from '../lib/addHabitDialog.svelte';
-    import type { habit } from '../lib/types/types.ts';
     import { habitsStore } from '../lib/stores/habitsStore';
     import { userStore } from '../lib/stores/userStore';
     import { onMount } from "svelte";
@@ -11,21 +10,20 @@
     let show = $state(false);
 
     onMount(async () => {
-        // Only fetch habits if user is logged in
+        // fetch habity tylko wtedy gdy jest sie zalogowanym
         if ($userStore) {
             await habitsStore.fetchHabits();
         }
         console.log($habitsStore.habits);});
 
+    // odświeżanie po dodaniu
     async function handleHabitAdded() {
-        // Refresh habits after adding a new one
         await habitsStore.fetchHabits();
         show = false;
     }
 </script>
 
 <div class="bg-stone-950 h-full w-full flex flex-col items-start p-4 space-y-4 relative overflow-y-clip">
-    <!--  Header  -->
     <header class="w-full h-1/10 grid grid-cols-2 grid-rows-2 gap-2">
         <h1 class="text-4xl font-bold text-white col-start-1 row-start-1">
             {#if $userStore}
@@ -34,7 +32,7 @@
                 Welcome to Habit-Tracker!
             {/if}
         </h1>
-
+<!--   przycisk dodawania nowego habitu     -->
         <div class="text-right col-start-2 row-start-1">
             {#if $userStore}
                 <button
@@ -75,19 +73,21 @@
     <div class="flex flex-row w-full h-9/10">
     {#if $userStore && !$habitsStore.loading}
         {#if $habitsStore.habits.length > 0}
+            <!-- wyświetlanie wszystkich habitów jezeli jest sie zalogowanym, habity sie nie ladują i jest ich wiecej niż 0-->
             <section class="h-full w-1/2 flex flex-col">
                         <div class="w-full lg:w-3/4 h-fit flex flex-col border-2 border-gray-400 rounded-[1.25rem] items-start p-2 gap-2 overflow-auto">
                             {#each $habitsStore.habits as habitOne (habitOne.id)}
-                                <Habit Habit={habitOne} />
+                                <HabitComponent habit={habitOne} />
                             {/each}
                         </div>
             </section>
+<!--     sekcja heatmapy i statystyk       -->
             <section class="h-full w-1/2 flex flex-col overflow-scroll">
                     {#each $habitsStore.habits as singleHabit (singleHabit.id)}
-                        <p class="text-center font-semibold bg-gray-600 rounded-t-2xl">{singleHabit.title}</p>
+                        <p class="text-center font-semibold bg-gray-600 rounded-t-2xl">{singleHabit.name}</p>
                         <div class="flex flex-row">
-                            <DonePerWeekDay Habit={singleHabit}/>
-                            <HeatMap Habit={singleHabit}/>
+                            <DonePerWeekDay habit={singleHabit}/>
+                            <HeatMap habit={singleHabit}/>
                         </div>
                     {/each}
             </section>
