@@ -23,7 +23,7 @@ def get_habits_api(request: Request, user: User = Depends(get_current_user), db:
 
     # Get all habits for the user
     habits = db.query(Habit).filter(Habit.user_id == user.user_id).all()
-    
+
     # Format habits with logs
     habits_data = []
     for habit in habits:

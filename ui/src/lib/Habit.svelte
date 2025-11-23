@@ -35,13 +35,11 @@
         const today = new Date();
 
         for (const datelog of Habit.logs ?? []) {
-            if (datelog?.date && isSameDay(datelog.date, today)) {
+            if (datelog.date && isSameDay(datelog.date, today)) {
                 const entries = Array.isArray(datelog.logs) ? datelog.logs : [];
 
-                // no inner entries => unknown (null)
                 if (entries.length === 0) return { found: true, completed: null };
 
-                // consider completed if any inner entry is completed
                 const completed = entries.some(l => !!l.completed);
                 return { found: true, completed };
             }
