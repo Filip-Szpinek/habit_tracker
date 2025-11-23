@@ -17,14 +17,14 @@
     }
 </script>
 
-{#snippet  Input(type, value)}
+{#snippet  Input(type, value, is_disabled)}
     <label>
         <input type={type}
-               disabled value={value}
-               class="bg-transparent disabled:text-gray-400/80 disabled:italic" />
+               value={value}
+               disabled={is_disabled}
+               class="bg-transparent disabled:text-gray-400/80 disabled:italic px-2 py-1" />
     </label>
 {/snippet}
-
 
 <main>
     <div class="flex flex-col items-center justify-center h-full text-white">
@@ -38,7 +38,7 @@
             <span>Username</span>
             <div class="flex flex-row gap-2 rounded-4 border-2 border-gray-300 w-fit rounded-lg">
                 {#if $userStore}
-                    {@render Input("text", $userStore.username)}
+                    {@render Input("text", $userStore.username, true)}
                     {:else}
                     <p class="p-3 bg-red-600/90 border-4 border-red-700 rounded-lg font-semibold">Unable to get a account information</p>
                 {/if}

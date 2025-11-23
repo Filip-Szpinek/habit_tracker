@@ -13,7 +13,7 @@
         if ($userStore) {
             await habitsStore.fetchHabits();
         }
-    });
+        console.log($habitsStore.habits);});
 
     async function handleHabitAdded() {
         // Refresh habits after adding a new one
@@ -22,7 +22,7 @@
     }
 </script>
 
-<div class="bg-stone-950 h-full w-full flex flex-col items-start p-4 space-y-4 relative">
+<div class="bg-stone-950 h-full w-full flex flex-col items-start p-4 space-y-4 relative overflow-y-clip">
     <!--  Header  -->
     <header class="w-full grid grid-cols-2 grid-rows-2 gap-2">
         <h1 class="text-4xl font-bold text-white col-start-1 row-start-1">
@@ -74,7 +74,7 @@
     <section class="h-full w-1/2 flex flex-col">
         {#if $userStore && !$habitsStore.loading}
             {#if $habitsStore.habits.length > 0}
-                <div class="w-full lg:w-2/3 h-fit flex flex-col border-2 border-gray-400 rounded-[1.25rem] items-start p-2 gap-2">
+                <div class="w-full lg:w-2/3 h-fit flex flex-col border-2 border-gray-400 rounded-[1.25rem] items-start p-2 gap-2 overflow-auto">
                     {#each $habitsStore.habits as habitOne (habitOne.id)}
                         <Habit Habit={habitOne} />
                     {/each}
@@ -82,7 +82,6 @@
             {:else if !$habitsStore.error}
                 <div class="w-full text-center py-12">
                     <p class="text-xl text-gray-500 mb-4">No habits yet!</p>
-                    <p class="text-gray-400">Click the + button to create your first habit</p>
                 </div>
             {/if}
         {:else if !$userStore}

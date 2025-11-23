@@ -12,7 +12,6 @@
     let successMessage = $state('');
 
     async function postHabit() {
-        // Validation
         if (!name.trim()) {
             error = 'Please enter a habit name';
             return;

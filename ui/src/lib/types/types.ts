@@ -1,10 +1,19 @@
 export interface habit {
     id: number,
-    name: string,
+    title: string,
     description: string,
     frequency: 'daily' | 'weekly' | 'monthly',
+    amount: number,
+    logs: logDate[]
+}
+
+export interface logDate {
+    date: string,
+    logs: habitLog[]
 }
 
 export interface habitLog {
-    is_done: boolean,
+    time?: string,
+    completed: boolean,
+    count: number
 }

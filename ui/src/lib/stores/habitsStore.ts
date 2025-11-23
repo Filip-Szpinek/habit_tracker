@@ -1,14 +1,23 @@
 import { writable } from 'svelte/store';
 
-interface HabitLog {
-    is_done: boolean;
+export interface Habit {
+    id: number,
+    name: string,
+    description: string,
+    frequency: string,
+    amount: number,
+    logs: LogDate[]
 }
 
-interface Habit {
-    id: number;
-    name: string;
-    description: string;
-    frequency: string;
+export interface LogDate {
+    date: string,
+    logs: Log[]
+}
+
+export interface Log {
+    time?: string,
+    completed: boolean,
+    count: number
 }
 
 interface HabitsState {
