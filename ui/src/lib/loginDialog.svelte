@@ -1,5 +1,6 @@
 <script lang="ts">
     import { userStore } from './stores/userStore';
+    import { habitsStore } from './stores/habitsStore';
 
     let { type = $bindable('login'), onClose } = $props();
 
@@ -20,9 +21,12 @@
             formData.append('login', username);
             formData.append('password', password);
 
-            const response = await fetch('http://localhost:8000/login', {
+            const response = await fetch('/login', {
                 method: 'POST',
                 credentials: 'include',
+                headers: {
+                    'Accept': 'application/json'  // Tell server we want JSON
+                },
                 body: formData
             });
 
@@ -35,12 +39,11 @@
             const data = await response.json();
             console.log('Login success:', data);
 
-            // Update user store
             userStore.login(username);
+            await habitsStore.fetchHabits();
 
             successMessage = 'Login successful!';
 
-            // Close dialog after a short delay
             setTimeout(() => {
                 onClose?.();
             }, 1000);
@@ -64,9 +67,12 @@
             formData.append('r_password', password);
             formData.append('r_password2', password2);
 
-            const response = await fetch('http://localhost:8000/register', {
+            const response = await fetch('/register', {
                 method: 'POST',
                 credentials: 'include',
+                headers: {
+                    'Accept': 'application/json'  // Tell server we want JSON
+                },
                 body: formData
             });
 
@@ -79,18 +85,34 @@
             const data = await response.json();
             console.log('Register success:', data);
 
-            // Clear form and switch to login
-            username = '';
-            password = '';
-            password2 = '';
-            type = 'login';
-            successMessage = 'Registration successful! Please login.';
+            userStore.login(username);
+            await habitsStore.fetchHabits();
+
+            successMessage = 'Registration successful! Welcome!';
+
+            setTimeout(() => {
+                onClose?.();
+            }, 1500);
+
         } catch (err) {
             console.error('Error:', err);
             error = 'Connection error';
         } finally {
             loading = false;
         }
+    }
+
+    function clearForm() {
+        username = '';
+        password = '';
+        password2 = '';
+        error = '';
+        successMessage = '';
+    }
+
+    function switchTab(newType: 'login' | 'register') {
+        type = newType;
+        clearForm();
     }
 </script>
 
@@ -107,7 +129,7 @@
                     type="radio"
                     name="option"
                     checked={type === 'login'}
-                    onchange={() => { type = 'login'; error = ''; successMessage = ''; }}
+                    onchange={() => switchTab('login')}
                     class="peer hidden"
             />
             <span class="block w-full px-3 py-2 rounded-lg transition-colors peer-checked:text-white">
@@ -119,7 +141,7 @@
                     type="radio"
                     name="option"
                     checked={type === 'register'}
-                    onchange={() => { type = 'register'; error = ''; successMessage = ''; }}
+                    onchange={() => switchTab('register')}
                     class="peer hidden"
             />
             <span class="block w-full px-3 py-2 rounded-lg transition-colors peer-checked:text-white">
@@ -149,7 +171,9 @@
             <div class="px-8 py-6 mt-4">
                 <div class="flex flex-col justify-center items-center h-full select-none">
                     <div class="flex flex-col items-center justify-center gap-2 mb-8">
-                        <div class="w-8 h-8 bg-gray-700 text-2xl"></div>
+                        <div class="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center text-2xl">
+                            👤
+                        </div>
                         <p class="m-0 text-[16px] font-semibold dark:text-white">
                             Login to your Account
                         </p>
@@ -163,6 +187,7 @@
                                 bind:value={username}
                                 placeholder="Username"
                                 class="border rounded-lg px-3 py-2 mb-5 text-sm w-full outline-none dark:border-gray-500 dark:bg-gray-900"
+                                disabled={loading}
                         />
                     </div>
                     <div class="w-full flex flex-col gap-2">
@@ -172,7 +197,8 @@
                                 placeholder="••••••••"
                                 class="border rounded-lg px-3 py-2 mb-5 text-sm w-full outline-none dark:border-gray-500 dark:bg-gray-900"
                                 type="password"
-                                onkeydown={(e) => e.key === 'Enter' && handleLogin()}
+                                onkeydown={(e) => e.key === 'Enter' && !loading && handleLogin()}
+                                disabled={loading}
                         />
                     </div>
                     <div class="w-full">
@@ -192,7 +218,9 @@
             <div class="px-8 py-6 mt-4">
                 <div class="flex flex-col justify-center items-center h-full select-none">
                     <div class="flex flex-col items-center justify-center gap-2 mb-8">
-                        <div class="w-8 h-8 bg-gray-700 text-2xl"></div>
+                        <div class="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center text-2xl">
+                            ➕
+                        </div>
                         <p class="m-0 text-[16px] font-semibold dark:text-white">
                             Create an Account
                         </p>
@@ -206,6 +234,7 @@
                                 bind:value={username}
                                 placeholder="Username"
                                 class="border rounded-lg px-3 py-2 mb-3 text-sm w-full outline-none dark:border-gray-500 dark:bg-gray-900"
+                                disabled={loading}
                         />
                     </div>
                     <span class="m-0 text-xs max-w-[90%] text-center text-[#8B8E98] mb-2">
@@ -218,6 +247,7 @@
                                 placeholder="••••••••"
                                 class="border rounded-lg px-3 py-2 mb-5 text-sm w-full outline-none dark:border-gray-500 dark:bg-gray-900"
                                 type="password"
+                                disabled={loading}
                         />
                     </div>
                     <div class="w-full flex flex-col gap-2">
@@ -227,7 +257,8 @@
                                 placeholder="••••••••"
                                 class="border rounded-lg px-3 py-2 mb-5 text-sm w-full outline-none dark:border-gray-500 dark:bg-gray-900"
                                 type="password"
-                                onkeydown={(e) => e.key === 'Enter' && handleRegister()}
+                                onkeydown={(e) => e.key === 'Enter' && !loading && handleRegister()}
+                                disabled={loading}
                         />
                     </div>
                     <div class="w-full">
@@ -238,7 +269,7 @@
                                 onclick={handleRegister}
                                 disabled={loading}
                         >
-                            {loading ? 'Loading...' : 'Register'}
+                            {loading ? 'Creating Account...' : 'Register'}
                         </button>
                     </div>
                 </div>
