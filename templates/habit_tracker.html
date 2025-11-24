@@ -6,7 +6,6 @@
     <title>Twoje Habity</title>
 </head>
 <body>
-
     {% if request.query_params.get('message') %}
     <div class="alert">
         {{ request.query_params.get('message') }}
